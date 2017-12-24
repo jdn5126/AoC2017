@@ -55,4 +55,10 @@ jnz 1 -23               # jump to 9 ----------OUTER LOOP END----------
 
 # h is bounded between 0 and 1000
 # need to find all non-prime numbers in range(107900, 124900, 17)
-# all even numbers are non-prime, so only look at odd numbers
+#
+# primes, total = 0, 0
+# for i in range(107900, 124900 + 1, 17):
+#   if is_prime(i):
+#       primes += 1
+#   total += 1
+# return total - count
