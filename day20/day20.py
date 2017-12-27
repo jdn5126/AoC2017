@@ -4,7 +4,7 @@ import sys
 
 
 # Find the particle which will stay closest to <0, 0, 0>
-# In other words, take limit(time->infinity) Manhattan(<a>)
+# In other words, take limit(time->infinity) Manhattan(<a> -> <v> -> <p>)
 def part1(particles):
     # Find particle(s) with smallest acceleration
     min_accel = sys.maxint
@@ -71,10 +71,12 @@ def build_particle_map(lines):
 
 # Evaluate position at each time step, remove all colliding particles, continue
 def run_simulation(particles, num_iters):
-    for i in range(0, num_iters):
+    for _ in range(0, num_iters):
         hash_pos = {}
+        collisions = []
         # Build hash_map of positions at current time
-        for i in range(0, len(particles)):
+        num_particles = len(particles)
+        for i in range(0, num_particles):
             # Update velocities
             particles[i][1][0] += particles[i][2][0]
             particles[i][1][1] += particles[i][2][1]
@@ -83,18 +85,18 @@ def run_simulation(particles, num_iters):
             particles[i][0][0] += particles[i][1][0]
             particles[i][0][1] += particles[i][1][1]
             particles[i][0][2] += particles[i][1][2]
-            # Hash it
-            try:
-                count, indices = hash_pos[ tuple(particles[i][0]) ]
-                count += 1
-                indices.append(i)
-            except KeyError:
-                hash_pos[ tuple(particles[i][0]) ] = 0, [i]
-        # Iterate over dict
-        for key in hash_pos.keys():
-            count, indices = hash_pos[key]
-            if count > 1:
-                print key, hash_pos[key]
+            # Hash position
+            if tuple(particles[i][0]) in hash_pos:
+                if particles[i][0] not in collisions:
+                    collisions.append(particles[i][0])
+            else:
+                hash_pos[ tuple(particles[i][0]) ] = None
+        # Remove all colliding particles
+        particles = [ particle for particle in particles if particle[0] not in collisions ]
+        # Delete hashed positions and collisions
+        del hash_pos
+        del collisions
+    return len(particles)
 
 
 if __name__ == "__main__":
@@ -103,6 +105,7 @@ if __name__ == "__main__":
     # Build particle map
     particles = build_particle_map(lines)
     # Find particle that stays closest to 0
-    print part1(particles)
+    print "1: Particle that remains closest to 0: {0}".format(part1(particles))
     # Take the limit as time goes to infinity
-    # run_simulation(particles, int(sys.argv[2]))
+    print "2: Number of particles after all collisions have resolved: {0}".format(
+            run_simulation(particles, int(sys.argv[2])))
