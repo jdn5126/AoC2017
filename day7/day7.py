@@ -57,23 +57,26 @@ def calc_sub_sums(node):
                 badNode2 = child
     # bad nodes
     if badNode1 is not None and badNode2 is not None:
-        diff = badNode1.sub_sum - badNode2.sub_sum
         if child_sums[badNode1.sub_sum] > 1:
             # badNode2 needs to change weight
-            if diff > 0:
-                print badNode2.weight + diff
+            if badNode1.sub_sum > badNode2.sub_sum:
+                # badNode2 needs to be increased
+                print badNode2.weight + ( badNode1.sub_sum - badNode2.sub_sum )
             else:
-                print badNode2.weight - diff
+                # badNode2 needs to be decreased
+                print badNode2.weight - ( badNode2.sub_sum - badNode1.sub_sum )
         else:
-            if diff > 0:
-                print badNode1.weight - diff
+            # badNode1 needs to change weight
+            if badNode1.sub_sum > badNode2.sub_sum:
+                # badNode1 needs to be decreased
+                print badNode1.weight - ( badNode1.sub_sum - badNode2.sub_sum )
             else:
-                print badNode1.weight + diff
+                # badNode1 needs to be increased
+                print badNode1.weight + ( badNode2.sub_sum - badNode1.sub_sum )
         sys.exit()
     else:
         return node.sub_sum
         
-
 
 def main(lines):
     tree = {}
